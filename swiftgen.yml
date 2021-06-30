@@ -1,0 +1,5 @@
+strings:
+  - inputs: Sources/MGNetworking/Resources/en.lproj/Localizable.strings
+    outputs:
+      - templateName: structured-swift5
+        output: Sources/MGNetworking/Strings.generated.swift
