@@ -133,6 +133,21 @@ extension Request: CustomStringConvertible {
 }
 
 // MARK: - Initializers
+public extension Request where Response: Swift.Codable {
+    init(
+        method: HTTPMethod = .post,
+        url: URL,
+        headers: [HeaderField]? = nil,
+        //parameters: Parameters? = nil,
+        model: Response,
+        encoder: JSONEncoder = JSONEncoder(),
+        decoder: JSONDecoder = JSONDecoder()
+    ) throws {
+        let body = try encoder.encode(model)
+        self.init(method: method, url: url, headers: headers, parameters: nil, body: body, decoder: decoder)
+    }
+}
+
 public extension Request where Response: Swift.Decodable {
     init(
         method: HTTPMethod = .get,
