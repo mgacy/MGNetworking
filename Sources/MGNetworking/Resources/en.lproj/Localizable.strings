@@ -7,8 +7,9 @@
 "error.malformed_request" = "Malformed Request";
 "error.network" = "Network Error: %@";
 "error.no_data" = "Missing Data";
-"error.invalid_response" = "Unexpexted Response Format: %@";
-"error.client_error" = "Client Error: %d"; /* TODO: check format string */
-"error.server_error" = "Server Error: %d";  /* TODO: check format string */
+"error.invalid_response" = "Unexpected Response Format: %@";
+"error.unrecognized_status_code" = "Unrecognized Status Code: %d";
+"error.client_error" = "Client Error: %d";
+"error.server_error" = "Server Error: %d";
 "error.decoding" = "Decoding Error: %@";
 

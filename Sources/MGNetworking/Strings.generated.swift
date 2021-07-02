@@ -20,7 +20,7 @@ internal enum L10n {
     internal static func decoding(_ p1: Any) -> String {
       return L10n.tr("Localizable", "error.decoding", String(describing: p1))
     }
-    /// Unexpexted Response Format: %@
+    /// Unexpected Response Format: %@
     internal static func invalidResponse(_ p1: Any) -> String {
       return L10n.tr("Localizable", "error.invalid_response", String(describing: p1))
     }
@@ -35,6 +35,10 @@ internal enum L10n {
     /// Server Error: %d
     internal static func serverError(_ p1: Int) -> String {
       return L10n.tr("Localizable", "error.server_error", p1)
+    }
+    /// Unrecognized Status Code: %d
+    internal static func unrecognizedStatusCode(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "error.unrecognized_status_code", p1)
     }
   }
 }
@@ -61,4 +65,3 @@ private final class BundleToken {
   }()
 }
 // swiftlint:enable convenience_type
-
