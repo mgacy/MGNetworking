@@ -21,7 +21,7 @@ public extension URLRequest {
 
 // MARK: - URLRequestConvertible
 extension URLRequest: URLRequestConvertible {
-    public func asURLRequest() -> URLRequest {
+    public func asURLRequest() throws -> URLRequest {
         return self
     }
 }

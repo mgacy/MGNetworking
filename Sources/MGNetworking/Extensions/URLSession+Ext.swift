@@ -31,6 +31,8 @@ public protocol SessionProtocol {
     func perform<T: RequestProtocol>(_ request: T) -> AnyPublisher<T.Response, NetworkClientError>
 }
 
+// MARK: - URLSession + SessionProtocol
+
 extension URLSession: SessionProtocol {
 
     @discardableResult
@@ -39,7 +41,15 @@ extension URLSession: SessionProtocol {
         _ request: T,
         completionHandler: @escaping CompletionHandler<T.Response>
     ) -> Resumable {
-        dataTask(with: request.asURLRequest()) { data, response, error in
+        let urlRequest: URLRequest
+        do {
+            urlRequest = try request.asURLRequest()
+        } catch {
+            completionHandler(.failure(.malformedRequest))
+            return EmptyResumable()
+        }
+
+        return dataTask(with: urlRequest) { data, response, error in
             if let error = error {
                 completionHandler(.failure(NetworkClientError.network(error: error)))
             } else if let data = data {
@@ -64,7 +74,15 @@ extension URLSession: SessionProtocol {
 
     @inlinable
     public func perform<T: RequestProtocol>(_ request: T) -> AnyPublisher<T.Response, NetworkClientError> {
-        dataTaskPublisher(for: request.asURLRequest())
+        let urlRequest: URLRequest
+        do {
+            urlRequest = try request.asURLRequest()
+        } catch {
+            return Result<T.Response, NetworkClientError>.Publisher(NetworkClientError.malformedRequest)
+                .eraseToAnyPublisher()
+        }
+
+        return dataTaskPublisher(for: urlRequest)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkClientError.invalidResponse(response)
@@ -75,5 +93,25 @@ extension URLSession: SessionProtocol {
             }
             .mapError { NetworkClientError.wrap($0) }
             .eraseToAnyPublisher()
+    }
+}
+
+// MARK: - URLSession + Supporting Types
+
+extension URLSession {
+
+    /// A class to return when we need to bail out of something which still needs to return `Resumable`.
+    public class EmptyResumable: Resumable {
+
+        @usableFromInline
+        internal init() {}
+
+        public func resume() {
+            // no-op
+        }
+
+        public func cancel() {
+            // no-op
+        }
     }
 }
