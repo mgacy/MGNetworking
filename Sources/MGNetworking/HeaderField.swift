@@ -8,8 +8,69 @@
 import Foundation
 
 /// Additional information about the resource to be fetched or the client requesting the resource.
-public enum HeaderField: Equatable, HeaderFieldProtocol {
+public struct HeaderField: Equatable {
+    /// Header field name.
+    public let name: String
 
+    /// Header field value.
+    public let value: String?
+
+    public init(name: String, value: String?) {
+        self.name = name
+        self.value = value
+    }
+}
+
+// MARK: - Builders
+extension HeaderField {
+
+    public static func accept(_ contentType: ContentType) -> Self {
+        .init(name: "Accept", value: contentType.rawValue)
+    }
+
+    public static func apiKey(_ value: String?) -> Self {
+        .init(name: "X-API-Key", value: value)
+    }
+
+    public static func cacheControl(_ value: String?) -> Self {
+        .init(name: "Cache-Control", value: value)
+    }
+
+    public static func contentTransferEncoding(_ value: String?) -> Self {
+        .init(name: "Content-Transfer-Encoding", value: value)
+    }
+
+    public static func contentType(_ type: ContentType?) -> Self {
+        .init(name: "Content-Type", value: type?.rawValue )
+    }
+
+    public static func ifMatch(_ value: String?) -> Self {
+        .init(name: "If-Match", value: value)
+    }
+
+    public static func ifNoneMatch(_ value: String?) -> Self {
+        .init(name: "If-None-Match", value: value)
+    }
+}
+
+// MARK: - Supporting Types
+extension HeaderField {
+    /*
+    // TODO: check against these
+    /// HTTP headers reserved by the URL Loading System.
+    /// See: https://developer.apple.com/documentation/foundation/nsurlrequest
+    static var reservedHeaderFields: [String] {
+        [
+            "Authorization",
+            "Connection",
+            "Content-Length",
+            "Host",
+            "Proxy-Authenticate",
+            "Proxy-Authorization",
+            "WWW-Authenticate"
+        ]
+    }
+     */
     public enum ContentType: RawRepresentable, Equatable {
         /// "application/json".
         case json
@@ -69,64 +130,9 @@ public enum HeaderField: Equatable, HeaderFieldProtocol {
             case json = "application/json"
             case xml = "application/xml"
             case urlencoded = "application/x-www-form-urlencoded"
-            case webp = "image/webp"
             case png = "image/apng"
+            case webp = "image/webp"
             case text = "text/html"
         }
     }
-
-    case accept(ContentType) // [ContentType]?
-    case apiKey(String)
-    case cacheControl(String)
-    case contentTransferEncoding(String)
-    case contentType(ContentType)
-    case ifMatch(String)
-    case ifNoneMatch(String)
-    case custom(name: String, value: String?)
-
-    /// Header field name.
-    public var name: String {
-        switch self {
-        case .accept: return "Accept"
-        case .apiKey: return "X-API-Key"
-        case .cacheControl: return "Cache-Control"
-        case .contentTransferEncoding: return "Content-Transfer-Encoding"
-        case .contentType: return "Content-Type"
-        case .ifMatch: return "If-Match"
-        case .ifNoneMatch: return "If-None-Match"
-        case .custom(name: let fieldName, _): return fieldName
-        }
-    }
-
-    /// Header field value.
-    public var value: String? {
-        switch self {
-        case .accept(let contentType): return contentType.rawValue
-        case .apiKey(let key): return key
-        case .cacheControl(let value): return value
-        case .contentTransferEncoding(let value): return value
-        case .contentType(let contentType): return contentType.rawValue
-        case .ifMatch(let value): return value
-        case .ifNoneMatch(let value): return value
-        case .custom(_, value: let value): return value
-        }
-    }
-
-    // TODO: check against these when using `.custom`
-    /// HTTP headers reserved by the URL Loading System.
-    /// See: https://developer.apple.com/documentation/foundation/nsurlrequest
-    static var reservedHeaderFields: [String] {
-        [
-            "Authorization",
-            "Connection",
-            "Content-Length",
-            "Host",
-            "Proxy-Authenticate",
-            "Proxy-Authorization",
-            "WWW-Authenticate"
-        ]
-    }
-
-    // TODO: handle capitalization when testing equality of `.custom` (`"accept"` and `"Accept"`) s
-    // See: https://forums.swift.org/t/dictionary-keys-equatable-conformance-is-unreliable/40140/8
 }
