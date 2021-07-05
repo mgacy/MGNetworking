@@ -77,6 +77,9 @@ extension SystemLogger {
     // MARK: - SystemLogging
 
     @available(iOS, introduced: 13, deprecated: 14, message: "Use `LogWrapper`")
+    @available(macOS, introduced: 10.15, deprecated: 11, message: "Use `LogWrapper`")
+    @available(tvOS, introduced: 13, deprecated: 14, message: "Use `LogWrapper`")
+    @available(watchOS, introduced: 6, deprecated: 7, message: "Use `LogWrapper`")
     public struct OldWrapper: SystemLogging {
 
         private let log: OSLog
@@ -91,7 +94,7 @@ extension SystemLogger {
         }
     }
 
-    @available(iOS 14.0, *)
+    @available(iOS 14.0, macOS 11.0, watchOS 7.0, tvOS 14.0, *)
     public struct LogWrapper: SystemLogging {
 
         private let logger: Logger
