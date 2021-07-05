@@ -21,7 +21,7 @@ extension HTTPURLResponse: StatusCodeValidating {
         case (400..<500): throw NetworkClientError.clientError(self)
         // Server Error
         case (500..<600): throw NetworkClientError.serverError(self)
-        default: throw NetworkClientError.unknown(message: "Unrecognized status code: \(statusCode)")
+        default: throw NetworkClientError.unknown(message: L10n.Error.unrecognizedStatusCode(statusCode))
         }
     }
 }
