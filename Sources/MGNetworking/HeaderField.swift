@@ -8,7 +8,7 @@
 import Foundation
 
 /// Additional information about the resource to be fetched or the client requesting the resource.
-public struct HeaderField: Equatable {
+public struct HeaderField: Equatable, NamedValue {
     /// Header field name.
     public let name: String
 
