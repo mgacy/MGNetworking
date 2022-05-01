@@ -9,7 +9,6 @@ import Foundation
 
 // Via John Sundell: https://www.swiftbysundell.com/tips/defining-static-urls-using-string-literals/
 extension URL: ExpressibleByStringLiteral {
-
     /// Creates a URL instance from the provided static string.
     /// - Parameter value: `StaticString` (used to disable string interpolation)
     ///

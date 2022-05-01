@@ -10,7 +10,9 @@ import Combine
 
 // MARK: - Resumable
 
+/// A protocol indicating that an operation or task supports resumption.
 public protocol Resumable: Cancellable {
+    /// Resumes the operation.
     func resume()
 }
 
@@ -18,25 +20,38 @@ extension URLSessionDataTask: Resumable {}
 
 // MARK: - SessionProtocol
 
+/// Coordinates a group of related, network data transfer tasks.
 public protocol SessionProtocol {
     typealias CompletionHandler<T> = (Result<T, NetworkClientError>) -> Void
 
     @discardableResult
     @inlinable
+    /// Creates a task that performs a network request, then calls a handler upon completion.
+    /// - Parameters:
+    ///   - _: The request to perform.
+    ///   - completionHandler: The completion handler to call when the request is complete.
+    /// - Returns: The resumable operation.
     func perform<T: RequestProtocol>(
         _: T,
         completionHandler: @escaping CompletionHandler<T.Response>
     ) -> Resumable
 
+    /// Returns a publisher that wraps a network operation for a given request.
+    /// - Parameter request: The request to perform.
+    /// - Returns: The publisher publishes the response when the task completes, or terminates if the task fails with an error.
     func perform<T: RequestProtocol>(_ request: T) -> AnyPublisher<T.Response, NetworkClientError>
 }
 
 // MARK: - URLSession + SessionProtocol
 
 extension URLSession: SessionProtocol {
-
     @discardableResult
     @inlinable
+    /// Creates a task that performs a network request, then calls a handler upon completion.
+    /// - Parameters:
+    ///   - _: The request to perform.
+    ///   - completionHandler: The completion handler to call when the request is complete.
+    /// - Returns: The resumable operation.
     public func perform<T: RequestProtocol>(
         _ request: T,
         completionHandler: @escaping CompletionHandler<T.Response>
@@ -73,6 +88,9 @@ extension URLSession: SessionProtocol {
     }
 
     @inlinable
+    /// Returns a publisher that wraps a network operation for a given request.
+    /// - Parameter request: The request to perform.
+    /// - Returns: The publisher publishes the response when the task completes, or terminates if the task fails with an error.
     public func perform<T: RequestProtocol>(_ request: T) -> AnyPublisher<T.Response, NetworkClientError> {
         let urlRequest: URLRequest
         do {
@@ -99,7 +117,6 @@ extension URLSession: SessionProtocol {
 // MARK: - URLSession + Supporting Types
 
 extension URLSession {
-
     /// A class to return when we need to bail out of something which still needs to return `Resumable`.
     public class EmptyResumable: Resumable {
 
