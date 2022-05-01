@@ -11,7 +11,6 @@ import Combine
 // MARK: - Protocol
 
 public protocol NetworkClientProtocol {
-
     /// Creates a resumable operation that performs the request, then calls a handler upon completion.
     /// - Parameters:
     ///   - request: The request to be performed.

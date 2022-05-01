@@ -15,6 +15,10 @@ public struct HeaderField: Equatable, NamedValue {
     /// Header field value.
     public let value: String?
 
+    /// Creates a new instance with the given name and value.
+    /// - Parameters:
+    ///   - name: The name of the header field.
+    ///   - value: The value of the header field.
     public init(name: String, value: String?) {
         self.name = name
         self.value = value
@@ -23,31 +27,51 @@ public struct HeaderField: Equatable, NamedValue {
 
 // MARK: - Builders
 extension HeaderField {
-
+    /// Returns an Accept header for the specified content type.
+    /// - Parameter contentType: The resource media type.
+    /// - Returns: The header field.
     public static func accept(_ contentType: ContentType) -> Self {
         .init(name: "Accept", value: contentType.rawValue)
     }
 
+    /// Returns an X-API-Key header field.
+    /// - Parameter value: The header field value.
+    /// - Returns: The header field.
     public static func apiKey(_ value: String?) -> Self {
         .init(name: "X-API-Key", value: value)
     }
 
+    /// Returns a Cache-Control header field.
+    /// - Parameter value: The header field value.
+    /// - Returns: The header field.
     public static func cacheControl(_ value: String?) -> Self {
         .init(name: "Cache-Control", value: value)
     }
 
+    /// Returns a Content-Transfer-Encoding header field.
+    /// - Parameter value: The header field value.
+    /// - Returns: The header field.
     public static func contentTransferEncoding(_ value: String?) -> Self {
         .init(name: "Content-Transfer-Encoding", value: value)
     }
 
+    /// Returns a Content-Type header field
+    /// - Parameter type: The resource media type.
+    /// - Returns: The header field.
     public static func contentType(_ type: ContentType?) -> Self {
         .init(name: "Content-Type", value: type?.rawValue )
     }
 
+    /// Returns an If-Match header field.
+    /// - Parameter value: The header field value.
+    /// - Returns: The header field.
     public static func ifMatch(_ value: String?) -> Self {
         .init(name: "If-Match", value: value)
     }
 
+    /// Returns an If-None-Match header field.
+    /// - Parameter value: The header field value.
+    /// - Returns: The header field.
     public static func ifNoneMatch(_ value: String?) -> Self {
         .init(name: "If-None-Match", value: value)
     }
@@ -71,6 +95,8 @@ extension HeaderField {
         ]
     }
      */
+
+    /// Resource media type.
     public enum ContentType: RawRepresentable, Equatable {
         /// "application/json".
         case json
@@ -87,6 +113,8 @@ extension HeaderField {
         /// Custom value.
         case custom(String)
 
+        /// Creates a new instance with the specified raw value.
+        /// - Parameter rawValue: The raw value to use for the new instance.
         public init?(rawValue: String) {
             switch rawValue {
             case Raw.json.rawValue:
@@ -106,6 +134,7 @@ extension HeaderField {
             }
         }
 
+        /// The corresponding value of the raw type.
         public var rawValue: String {
             switch self {
             case .json:
@@ -126,7 +155,7 @@ extension HeaderField {
         }
 
         // swiftlint:disable:next nesting type_name
-        enum Raw: String, Equatable {
+        private enum Raw: String, Equatable {
             case json = "application/json"
             case xml = "application/xml"
             case urlencoded = "application/x-www-form-urlencoded"

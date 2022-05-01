@@ -8,8 +8,10 @@
 import Foundation
 
 // MARK: - Server
+/// Representation of the environment-dependent components shared by all requests to a given API.
 public struct Server {
 
+    /// The scheme of URLs identifying resources on a server.
     public enum Scheme: Equatable, RawRepresentable {
         case https
         case http
@@ -26,6 +28,7 @@ public struct Server {
             }
         }
 
+        /// The corresponding value of the raw type.
         public var rawValue: String {
             switch self {
             case .http:
@@ -38,20 +41,27 @@ public struct Server {
         }
 
         // swiftlint:disable:next nesting type_name
-        enum Raw: String, Equatable {
+        private enum Raw: String, Equatable {
             case http = "http"
             case https = "https"
         }
     }
 
+    /// The scheme subcomponent of an eventual `URLRequest`'s `URL`.
     public let scheme: Scheme
 
+    /// The host subcomponent of an eventual `URLRequest`'s `URL`.
     public let host: String
 
+    /// The base `URL` string shared by all requests to a given API.
     public var baseURLString: String {
         scheme.rawValue + "://" + host
     }
 
+    /// Creates a server with the specified scheme and host.
+    /// - Parameters:
+    ///   - scheme: The scheme subcomponent of resources.
+    ///   - host: The host subcomponent of resources.
     public init(scheme: Scheme = .https, host: String) {
         self.scheme = scheme
         self.host = host
@@ -60,11 +70,20 @@ public struct Server {
 
 // MARK: - Endpoint
 
+/// A representation of a single `Server` resource.
 public struct Endpoint<Response>: Equatable {
+    /// The HTTP request method.
     public let method: HTTPMethod
+    /// The path component of the endpoint's URL.
     public let path: String
+    /// The URL query parameters of the endpoint's URL.
     public var parameters: [URLQueryItem]?
 
+    /// Creates an endpoint using the specified method, path, and parameters.
+    /// - Parameters:
+    ///   - method: The HTTP request method.
+    ///   - path: The request path.
+    ///   - parameters: The request URL query parameters.
     public init(
         method: HTTPMethod = .get,
         path: String,
@@ -75,6 +94,11 @@ public struct Endpoint<Response>: Equatable {
         self.parameters = parameters
     }
 
+    /// Creates an endpoint using the specified method, path, and parameters.
+    /// - Parameters:
+    ///   - method: The HTTP request method.
+    ///   - path: The request path.
+    ///   - parameters: The request URL query parameters.
     public init<T: Parameter>(
         method: HTTPMethod = .get,
         path: String,
@@ -86,6 +110,7 @@ public struct Endpoint<Response>: Equatable {
 }
 
 extension Endpoint: CustomStringConvertible {
+    /// A textual description of the endpoint.
     public var description: String {
         "\(method) \(path) \(parameters != nil ? String(describing: parameters!) : "")"
     }
@@ -93,11 +118,17 @@ extension Endpoint: CustomStringConvertible {
 
 // MARK: - EndpointRequest
 
+/// A representation of a network request for an `Endpoint` of a `Server`.
 public struct EndpointRequest<Response>: RequestProtocol {
+    /// The request server.
     public let server: Server
+    /// The HTTP header fields of the request.
     public var headers: [HeaderField]?
+    /// The request endpoint.
     public var endpoint: Endpoint<Response>
+    /// The data sent as the message body of a request, such as for an HTTP POST request.
     public let body: Data?
+    /// A closure converting the response into `Response`.
     public let decode: (Data) throws -> Response
 
     var url: URL? {
@@ -111,6 +142,8 @@ public struct EndpointRequest<Response>: RequestProtocol {
         return components.url
     }
 
+    /// Returns a URL request
+    /// - Returns: The request.
     public func asURLRequest() throws -> URLRequest {
         guard let url = url else {
             throw NetworkClientError.malformedRequest
@@ -133,6 +166,7 @@ public struct EndpointRequest<Response>: RequestProtocol {
 
 // MARK: - CustomStringConvertible
 extension EndpointRequest: CustomStringConvertible {
+    /// A textual description of the endpoint request.
     public var description: String {
         let bodyDescription = body != nil ? (String(data: body!, encoding: .utf8) ?? "") : ""
         return "\(endpoint.method) \(url?.absoluteString ?? "INVALID URL") \(bodyDescription)"
@@ -141,6 +175,13 @@ extension EndpointRequest: CustomStringConvertible {
 
 // MARK: - Initializers
 public extension EndpointRequest where Response: Swift.Decodable {
+    /// Creates a new endpoint request.
+    /// - Parameters:
+    ///   - server: The request server.
+    ///   - headers: The request header fields.
+    ///   - endpoint: The request endpoint.
+    ///   - body: The data sent as the request body.
+    ///   - decoder: The decoder used to parse the response data into a `Response`.
     init(
         server: Server,
         headers: [HeaderField]? = nil,
@@ -160,6 +201,14 @@ public extension EndpointRequest where Response: Swift.Decodable {
 }
 
 public extension EndpointRequest where Response: Swift.Codable {
+    /// Creates a new endpoint request.
+    /// - Parameters:
+    ///   - server: The request server.
+    ///   - headers: The request header fields.
+    ///   - endpoint: The request endpoint.
+    ///   - model: The model to be encoded as the request body.
+    ///   - encoder: The encoder used to create a JSON-encoded representation of the `model`.
+    ///   - decoder: The decoder used to parse the response data into a `Response`.
     init(
         server: Server,
         headers: [HeaderField]? = nil,
@@ -174,6 +223,12 @@ public extension EndpointRequest where Response: Swift.Codable {
 }
 
 public extension EndpointRequest where Response == Void {
+    /// Creates a new endpoint request.
+    /// - Parameters:
+    ///   - server: The request server.
+    ///   - headers: The request header fields.
+    ///   - endpoint: The request endpoint.
+    ///   - body: The data sent as the request body.
     init(
         server: Server,
         headers: [HeaderField]? = nil,

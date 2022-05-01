@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// A network error.
 public enum NetworkClientError: Error {
     /// Not a valid request.
     case malformedRequest
@@ -46,6 +47,7 @@ public enum NetworkClientError: Error {
 
 // TODO: add static method on mapping status
 extension NetworkClientError: LocalizedError {
+    /// A description of the error, suitable for debugging.
     public var errorDescription: String? {
         switch self {
         case .malformedRequest:
@@ -69,5 +71,6 @@ extension NetworkClientError: LocalizedError {
 }
 
 public struct ImageError: Error {
+    /// Creates a new image error.
     public init() {}
 }

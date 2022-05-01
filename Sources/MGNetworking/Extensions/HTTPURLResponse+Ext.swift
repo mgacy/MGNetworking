@@ -9,6 +9,7 @@ import Foundation
 
 // MARK: - HTTPURLResponse+StatusCodeValidating
 extension HTTPURLResponse: StatusCodeValidating {
+    /// Throws an error if the response indicates a failure.
     public func validateStatus() throws {
         switch statusCode {
         // Informational
