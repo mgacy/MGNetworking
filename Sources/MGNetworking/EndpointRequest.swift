@@ -77,7 +77,7 @@ public struct Endpoint<Response>: Equatable {
     /// The path component of the endpoint's URL.
     public let path: String
     /// The URL query parameters of the endpoint's URL.
-    public let parameters: [URLQueryItem]?
+    public var parameters: [URLQueryItem]?
 
     /// Creates an endpoint using the specified method, path, and parameters.
     /// - Parameters:
@@ -123,9 +123,9 @@ public struct EndpointRequest<Response>: RequestProtocol {
     /// The request server.
     public let server: Server
     /// The HTTP header fields of the request.
-    public let headers: [HeaderField]?
+    public var headers: [HeaderField]?
     /// The request endpoint.
-    public let endpoint: Endpoint<Response>
+    public var endpoint: Endpoint<Response>
     /// The data sent as the message body of a request, such as for an HTTP POST request.
     public let body: Data?
     /// A closure converting the response into `Response`.

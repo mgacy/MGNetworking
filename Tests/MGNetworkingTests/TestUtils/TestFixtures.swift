@@ -42,7 +42,35 @@ let userJSON = """
 """
 
 extension String {
-    static var usersPath = "/users"
-    static var userURL = "https://jsonplaceholder.typicode.com/users/1"
-    static var jsonPlaceholder = "jsonplaceholder.typicode.com"
+    static let placeholderHost: String = "jsonplaceholder.typicode.com"
+    static let usersPath = "/users"
+    static let userPath = "/users/1"
+    static let usersURLString = "https://jsonplaceholder.typicode.com/users"
+}
+
+extension URL {
+    static let placeholder: URL = "https://jsonplaceholder.typicode.com"
+    static let users: URL = "https://jsonplaceholder.typicode.com/users"
+    static let user: URL = "https://jsonplaceholder.typicode.com/users/1"
+}
+
+extension Server {
+    static let placeholder = Server(scheme: .https, host: .placeholderHost)
+}
+
+extension Endpoint where Response == Void {
+    static let getEmpty = Endpoint<Void>(method: .get, path: "", parameters: nil)
+}
+
+extension Endpoint where Response == [User] {
+    static let getUsers = Endpoint<[User]>(method: .get, path: .usersPath, parameters: nil)
+}
+
+extension Endpoint where Response == User {
+    static let getUser = Endpoint<User>(method: .get, path: .userPath, parameters: nil)
+    static let postUser = Endpoint<User>(method: .post, path: .usersPath, parameters: nil)
+}
+
+extension Array where Element == HeaderField {
+    static let accept = [HeaderField.accept(.json)]
 }

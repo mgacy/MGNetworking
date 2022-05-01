@@ -76,4 +76,26 @@ extension XCTestCase {
 
         return unwrappedResult
     }
+
+    // Based on code by John Sundell:
+    // https://www.swiftbysundell.com/articles/testing-error-code-paths-in-swift/
+    func assert<T, E: Error>(
+        _ result: Result<T, E>?,
+        containsError expectedError: Error,
+        in file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        switch result {
+        case .success?:
+            XCTFail("No error thrown", file: file, line: line)
+        case .failure(let error)?:
+            XCTAssertEqual(
+                error.localizedDescription,
+                expectedError.localizedDescription,
+                file: file, line: line
+            )
+        case nil:
+            XCTFail("Result was nil", file: file, line: line)
+        }
+    }
 }
