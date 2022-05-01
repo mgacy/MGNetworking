@@ -41,7 +41,7 @@ public struct Server {
         }
 
         // swiftlint:disable:next nesting type_name
-        enum Raw: String, Equatable {
+        private enum Raw: String, Equatable {
             case http = "http"
             case https = "https"
         }

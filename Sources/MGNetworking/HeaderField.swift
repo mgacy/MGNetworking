@@ -155,7 +155,7 @@ extension HeaderField {
         }
 
         // swiftlint:disable:next nesting type_name
-        enum Raw: String, Equatable {
+        private enum Raw: String, Equatable {
             case json = "application/json"
             case xml = "application/xml"
             case urlencoded = "application/x-www-form-urlencoded"
