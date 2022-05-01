@@ -63,7 +63,7 @@ public struct Server {
 public struct Endpoint<Response>: Equatable {
     public let method: HTTPMethod
     public let path: String
-    public let parameters: [URLQueryItem]?
+    public var parameters: [URLQueryItem]?
 
     public init(
         method: HTTPMethod = .get,
@@ -95,8 +95,8 @@ extension Endpoint: CustomStringConvertible {
 
 public struct EndpointRequest<Response>: RequestProtocol {
     public let server: Server
-    public let headers: [HeaderField]?
-    public let endpoint: Endpoint<Response>
+    public var headers: [HeaderField]?
+    public var endpoint: Endpoint<Response>
     public let body: Data?
     public let decode: (Data) throws -> Response
 
