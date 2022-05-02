@@ -5,46 +5,40 @@ on:
 
 jobs:
   Build-Github-Actions:
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
     - name: Git Checkout
       uses: actions/checkout@v3
 
-    # - name: Git Checkout Docs
-    #   uses: actions/checkout@v3
-    #   with:
-    #     ref: docs
-    #     path: docs
-
-    - name: Debug
-      run: |
-        pwd
-        echo ${HOME}
-        echo ${GITHUB_WORKSPACE}
+    - name: Git Checkout Docs
+      uses: actions/checkout@v3
+      with:
+        ref: docs
+        path: docs
 
     - name: Build Doc Bundle
       run: |
           echo "Building Documentation..."
-          xcodebuild docbuild -scheme MGNetworking -derivedDataPath ./docbuild -destination 'platform=macOS'
+          xcodebuild docbuild -scheme MGNetworking -derivedDataPath ./docbuild -destination 'platform=macOS' > build_output.txt
+          # Uncomment to see build output
+          # cat build_output.txt
 
-          # Doc is built, but it's inside docbuild, let's find it
+          # Find documentation inside docbuild
           DOCC_DIR=`find ./docbuild -type d -iname "MGNetworking.doccarchive"`
-          echo "$DOCC_DIR"
-
-          # Get the last commit message and add current date
-          DOC_COMMIT_MESSAGE=`git log -1  --pretty='%s'`" - "`date +%Y/%m/%d`
-          echo "$echo "$DOC_COMMIT_MESSAGE"
 
           # Pretty print DocC JSON output so that it can be consistently diffed between commits
-          # TODO: does this work?
           export DOCC_JSON_PRETTYPRINT=YES
 
           # Export docs
+          echo "Exporting Documentation ..."
           $(xcrun --find docc) process-archive \
           transform-for-static-hosting "$DOCC_DIR" \
           --output-path ./docs/docs \
           --hosting-base-path MGNetworking
 
+    - name: Commit
+      id: commit
+      run: |
           # Save the current commit we've just built documentation from in a variable
           CURRENT_COMMIT_HASH=`git rev-parse --short HEAD`
           echo "$CURRENT_COMMIT_HASH"
@@ -55,10 +49,9 @@ jobs:
 
           if [ -n "$(git status --porcelain)" ]; then
               echo "Documentation changes found. Commiting the changes to the 'docs' branch and pushing to origin."
-              # git commit -m "Update GitHub Pages documentation site to '$CURRENT_COMMIT_HASH'."
-              # git push origin HEAD:docs
+              git commit -m "Update GitHub Pages documentation site to '$CURRENT_COMMIT_HASH'."
+              git push origin HEAD:docs
           else
             # No changes found, nothing to commit.
             echo "No documentation changes found."
           fi
-
