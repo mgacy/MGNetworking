@@ -1,5 +1,6 @@
 name: Generate DocC
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -7,10 +8,10 @@ jobs:
   Build-Github-Actions:
     runs-on: macos-12
     steps:
-    - name: Git Checkout
+    - name: Git Checkout main
       uses: actions/checkout@v3
 
-    - name: Git Checkout Docs
+    - name: Git Checkout docs
       uses: actions/checkout@v3
       with:
         ref: docs
@@ -41,7 +42,6 @@ jobs:
       run: |
           # Save the current commit we've just built documentation from in a variable
           CURRENT_COMMIT_HASH=`git rev-parse --short HEAD`
-          echo "$CURRENT_COMMIT_HASH"
 
           # Commit and push our changes to the gh-pages branch
           cd docs
