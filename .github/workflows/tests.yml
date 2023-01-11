@@ -23,5 +23,10 @@ jobs:
           platform: iOS
           code-coverage: true
           upload-logs: true
+      - name: Convert Code Coverage
+        run: |
+          xcrun llvm-cov export -format="lcov" -instr-profile=$(find .build -name default.profdata) $(find .build -name MGNetworkingTests) > coverage.lcov
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v3
+        with:
+          files: coverage.lcov
