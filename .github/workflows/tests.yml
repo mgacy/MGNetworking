@@ -23,3 +23,5 @@ jobs:
           platform: iOS
           code-coverage: true
           upload-logs: true
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v3
